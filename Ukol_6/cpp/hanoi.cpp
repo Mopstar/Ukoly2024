@@ -103,6 +103,7 @@ int main() {
     if (n <= 0) {
         cout << "Počet disků musí být větší než nula." << endl;
         return 1;
+    }
 
     vector<vector<int>> veze(3);
 
