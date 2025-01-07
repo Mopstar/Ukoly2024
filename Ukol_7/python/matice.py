@@ -2,48 +2,61 @@ import random
 
 
 def vytvor_matici(n: int, m: int) -> list[list[int]]:
-    return [[random.randint(0, 9) for _ in range(m)] for _ in range(n)] # Vytvoří matici n × m s náhodnými čísly 0–9.
+    return [[random.randint(0, 9) for _ in range(m)] for _ in range(n)]
 
 
 def reprezentace_matice(matice: list[list[int]]) -> str:
-    return ' '.join(" ".join(map(str, radek)) for radek in matice)  # Adding a newline at the end
+    if not matice:
+        return ""
+    return "\n".join(" ".join(map(str, radek)) for radek in matice) + "\n"
 
 
 def soucet_matic(matice1: list[list[int]], matice2: list[list[int]]) -> list[list[int]]:
-    if len(matice1) != len(matice2) or len(matice1[0]) != len(matice2[0]): # Kontroluje, zda mají matice stejné rozměry.
-        raise ValueError("Matice nemají stejné rozměry!") # Vyvolá chybu, pokud rozměry nesouhlasí.
-    return [[matice1[i][j] + matice2[i][j] for j in range(len(matice1[0]))] for i in range(len(matice1))]  # Sečte odpovídající prvky matic.
+    if len(matice1) != len(matice2) or any(len(radek1) != len(radek2) for radek1, radek2 in zip(matice1, matice2)):
+        print("Chyba, Matice nemají stejné rozměry.")
+        return None
+    return [[matice1[i][j] + matice2[i][j] for j in range(len(matice1[0]))] for i in range(len(matice1))]
 
 
-def nasobeni_matic(matice1: list[list[int]], matice2: list[list[int]]) -> list[list[int]]:
-    if len(matice1[0]) != len(matice2): # Kontroluje, zda je počet sloupců první matice roven počtu řádků druhé matice.
-        raise ValueError("Počet sloupců matice 1 se nerovná počtu řádků matice 2!") # Vyvolá chybu, pokud násobení není možné.
-    return [[sum(matice1[i][k] * matice2[k][j] for k in range(len(matice2))) for j in range(len(matice2[0]))] for i in range(len(matice1))]  # Pro každý prvek výsledné matice spočítá skalární součin odpovídajícího řádku a sloupce.
-
+def nasobeni_matic(matice1: list[list[int]], matice2: list[list[int]]) -> list[list[int]] | None:
+    if not matice1 and not matice2:  # Obě matice prázdné
+        return []
+    if not matice1 or not matice2 or len(matice1[0]) != len(matice2):
+        print("Chyba: Počet sloupců první matice se nerovná počtu řádků druhé matice.")
+        return None
+    return [
+        [
+            sum(matice1[i][k] * matice2[k][j] for k in range(len(matice2)))
+            for j in range(len(matice2[0]))
+        ]
+        for i in range(len(matice1))
+    ]
 
 def transpozice_matice(matice: list[list[int]]) -> list[list[int]]:
-    if not matice or not matice[0]:  # Check if the matrix is empty or has empty rows
+    if not matice:
         return []
-    return [list(radek) for radek in zip(*matice)]
+    if not matice[0]:
+        return [[]]
+    return [[matice[j][i] for j in range(len(matice))] for i in range(len(matice[0]))]
 
 
 if __name__ == "__main__":
-    matice1: list[list[int]] = vytvor_matici(2, 3) # Vytvoří matici o rozměrech 3 × 2 s náhodnými čísly.
-    matice2: list[list[int]] = vytvor_matici(3, 2)  # Vytvoří matici o rozměrech 2 × 4 s náhodnými čísly.
+    matice1: list[list[int]] = vytvor_matici(3, 2)
+    matice2: list[list[int]] = vytvor_matici(2, 4)
 
     print("Matice 1:")
-    print(reprezentace_matice(matice1)) # Vypíše reprezentaci matice 1 jako text.
+    print(reprezentace_matice(matice1))
     print("Matice 2:")
-    print(reprezentace_matice(matice2)) # Vypíše reprezentaci matice 2 jako text.
+    print(reprezentace_matice(matice2))
 
-    soucet = soucet_matic(matice1, matice1)  # Sečteme matici 1 samu se sebou
+    soucet = soucet_matic(matice1, matice1)
     print("Součet matic:")
-    print(reprezentace_matice(soucet)) # Vypíše výslednou matici po součtu.
+    print(reprezentace_matice(soucet))
 
-    nasobek = nasobeni_matic(matice1, matice2) # Vynásobí matici 1 a matici 2.
+    nasobek = nasobeni_matic(matice1, matice2)
     print("Násobení matic:")
-    print(reprezentace_matice(nasobek)) # Vypíše výslednou matici po násobení.
+    print(reprezentace_matice(nasobek))
 
-    transponovana = transpozice_matice(matice1) # Provede transpozici matice 1.
+    transponovana = transpozice_matice(matice1)
     print("Transponovaná matice:")
-    print(reprezentace_matice(transponovana)) # Vypíše transponovanou matici.
+    print(reprezentace_matice(transponovana))
